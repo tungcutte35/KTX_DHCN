@@ -119,7 +119,7 @@ const Login = () => {
       </Helmet>
       <Content
         style={{
-          backgroundImage: 'url(../../public/bg_ktx.jpg)',
+          backgroundImage: 'url(/bg_ktx.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           display: 'flex',
