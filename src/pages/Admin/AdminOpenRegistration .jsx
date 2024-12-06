@@ -294,7 +294,6 @@ const AdminOpenRegistration = ({ initialData }) => {
           /> */}
         </>
       ),
-      width: '20%',
     },
   ];
 
