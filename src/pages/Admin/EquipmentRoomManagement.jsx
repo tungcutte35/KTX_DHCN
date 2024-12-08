@@ -155,6 +155,13 @@ const EquipmentManagement = () => {
       dataIndex: 'available',
       key: 'available',
       align: 'center',
+      render: (available) => {
+        // Tách số lượng đã đăng ký (3) và tổng số lượng (10)
+        const [registered, total] = available.split('/').map(Number);
+        // Tính số lượng còn lại (hiện tại)
+        const current = total - registered;
+        return `${current}/${total}`;
+      },
     },
     {
       title: 'Hành động',
@@ -510,7 +517,7 @@ const EquipmentManagement = () => {
         </Row>
 
         <Modal
-          title={`Danh sách thiết bị phòng ${selectedRoom.roomNumber}"`}
+          title={`Danh sách thiết bị phòng ${selectedRoom?.roomNumber}`}
           visible={isModalVisible}
           onCancel={handleCancel}
           footer={null}
