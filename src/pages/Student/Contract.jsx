@@ -57,6 +57,14 @@ const ContractManagement = () => {
     setIsStatusModalVisible(false);
     setSelectedContract(null);
   };
+  useEffect(() => {
+    const sortedContracts = [...contracts].sort((a, b) => {
+      if (a.status === 'active' && b.status !== 'active') return -1;
+      if (a.status !== 'active' && b.status === 'active') return 1;
+      return 0;
+    });
+    setContracts(sortedContracts);
+  }, [contracts]);
   const columns = [
     {
       title: 'Số hợp đồng',
