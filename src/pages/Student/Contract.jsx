@@ -57,14 +57,14 @@ const ContractManagement = () => {
     setIsStatusModalVisible(false);
     setSelectedContract(null);
   };
-  useEffect(() => {
-    const sortedContracts = [...contracts].sort((a, b) => {
+  const sortContractsByStatus = (contracts) => {
+    return [...contracts].sort((a, b) => {
       if (a.status === 'active' && b.status !== 'active') return -1;
       if (a.status !== 'active' && b.status === 'active') return 1;
       return 0;
     });
-    setContracts(sortedContracts);
-  }, []);
+  };
+  const sortedContracts = sortContractsByStatus(contracts);
   const columns = [
     {
       title: 'Số hợp đồng',
@@ -87,6 +87,11 @@ const ContractManagement = () => {
       title: 'Tình trạng hợp đồng',
       dataIndex: 'status',
       key: 'status',
+      sorter: (a, b) => {
+        if (a.status === 'active' && b.status !== 'active') return -1;
+        if (a.status !== 'active' && b.status === 'active') return 1;
+        return 0;
+      },
       render: (text, record) => (
         <span style={{ color: getStatusColor(record.status) }}>
           {record.status === 'active' ? 'Đang hoạt động' : 'Đã kết thúc'}
@@ -129,7 +134,7 @@ const ContractManagement = () => {
             }}
           >
             <Table
-              dataSource={contracts}
+              dataSource={sortedContracts}
               columns={columns}
               pagination={{ pageSize: 5 }}
               rowKey="key"
