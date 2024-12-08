@@ -110,6 +110,9 @@ const RoomRegistration = () => {
   const handleLogin = () => {
     navigate('/login');
   };
+  const handleGoToHome = () => {
+    navigate('/home');
+  };
 
   const onSearch = (e) => {
     setSearchText(e.target.value);
@@ -232,6 +235,17 @@ const RoomRegistration = () => {
               }}
             />
           </Col>
+        </Row>
+        <Row
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginRight: '20px',
+          }}
+        >
+          <Button type="primary" onClick={handleGoToHome}>
+            Về trang chủ
+          </Button>
         </Row>
       </Layout.Header>
       <Content

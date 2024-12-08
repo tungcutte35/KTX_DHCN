@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useNavigate,
 } from 'react-router-dom';
 import { UserContext } from './context/UseContext'; // Import UserContext
 import LayoutComponent from './components/StudentLayout/Layout';
@@ -38,9 +39,16 @@ import { message } from 'antd';
 const App = () => {
   const { user, setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(true); // New loading state
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) {
+      Cookies.remove('token');
+    }
+  }, []);
 
   useEffect(() => {
     const token = Cookies.get('token');
+
     if (token) {
       fetchInfoUser(token)
         .then((userInfo) => {
@@ -50,13 +58,13 @@ const App = () => {
           console.error('Error fetching user data:', error);
         })
         .finally(() => {
-          setLoading(false); // Set loading to false when done
+          setLoading(false);
         });
     } else {
-      setLoading(false); // No token means we are done loading
+      setLoading(false);
       console.warn('No token found in cookies');
     }
-  }, [setUser]);
+  }, []);
 
   if (loading) {
     return (
@@ -119,7 +127,6 @@ const App = () => {
   };
 
   const isRoomLeader = user?.role === 'room_leader';
-
   return (
     <Router>
       <Routes>

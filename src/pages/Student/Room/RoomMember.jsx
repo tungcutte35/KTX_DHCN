@@ -9,11 +9,12 @@ import {
   Spin,
   message,
 } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Helmet } from 'react-helmet';
 import Cookies from 'js-cookie'; // Import Cookies
 import { getMemberRoom } from '../../../services/auth/room';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../../context/UseContext';
 
 const { Option } = Select;
 
@@ -24,6 +25,7 @@ const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +71,9 @@ const StudentList = () => {
   const handleLeaderChange = (value) => {
     setSelectedLeader(value);
   };
-
+  const handleGoToHome = () => {
+    navigate('/registerRoom');
+  };
   const columns = [
     { title: 'MSSV', dataIndex: 'studentId', key: 'studentId' },
     { title: 'Họ và tên', dataIndex: 'name', key: 'name' },
@@ -97,18 +101,35 @@ const StudentList = () => {
           >
             Danh sách sinh viên trong phòng
           </h2>
-          <Button
-            type="primary"
-            onClick={showModal}
-            style={{
-              display: 'block',
-              marginLeft: 'auto',
-              marginRight: '20px',
-              marginBottom: '16px',
-            }}
-          >
-            Chuyển trưởng phòng
-          </Button>
+          {user?.roomName === '' ? (
+            <Button
+              type="primary"
+              onClick={handleGoToHome}
+              style={{
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: '20px',
+                marginBottom: '16px',
+              }}
+            >
+              Đăng ký phòng
+            </Button>
+          ) : null}
+          {user?.roomName || user?.isLeader ? (
+            <Button
+              type="primary"
+              onClick={showModal}
+              style={{
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: '20px',
+                marginBottom: '16px',
+              }}
+            >
+              Chuyển trưởng phòng
+            </Button>
+          ) : null}
+
           <Card
             bordered={true}
             style={{ boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)' }}
