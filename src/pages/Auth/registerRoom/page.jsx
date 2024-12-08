@@ -244,7 +244,7 @@ const RoomRegistration = () => {
           }}
         >
           <Button type="primary" onClick={handleGoToHome}>
-            Về trang chủ
+            Đến trang chủ
           </Button>
         </Row>
       </Layout.Header>
