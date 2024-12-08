@@ -510,7 +510,7 @@ const EquipmentManagement = () => {
         </Row>
 
         <Modal
-          title="Danh sách thiết bị"
+          title={`Danh sách thiết bị phòng ${selectedRoom.roomNumber}"`}
           visible={isModalVisible}
           onCancel={handleCancel}
           footer={null}
