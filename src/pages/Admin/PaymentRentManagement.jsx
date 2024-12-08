@@ -244,10 +244,10 @@ const PaymentRentManagement = () => {
                 render={(text, record) => (
                   <span
                     style={{
-                      color: record.status === '' ? 'green' : 'red',
+                      color: record.status === 'paid' ? 'green' : 'red',
                     }}
                   >
-                    {record.status === 'PAID'
+                    {record.status === 'paid'
                       ? 'Đã thanh toán'
                       : 'Chưa thanh toán'}
                   </span>
