@@ -600,11 +600,13 @@ const PaymentUtilitiesManagement = () => {
                 <Select placeholder="Chọn phòng" onChange={handleRoomChange}>
                   {buildingData.map((building) =>
                     building.floors.map((floor) =>
-                      floor.rooms.map((room) => (
-                        <Option key={room.key} value={room.key}>
-                          {room.roomNumber}
-                        </Option>
-                      ))
+                      floor.rooms
+                        .filter((room) => !room.isElectricityWaterCharged) // Lọc các phòng có isElectricityWaterCharged là false
+                        .map((room) => (
+                          <Option key={room.key} value={room.key}>
+                            {room.roomNumber}
+                          </Option>
+                        ))
                     )
                   )}
                 </Select>
