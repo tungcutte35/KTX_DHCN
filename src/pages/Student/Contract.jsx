@@ -64,7 +64,7 @@ const ContractManagement = () => {
       return 0;
     });
     setContracts(sortedContracts);
-  }, [contracts]);
+  }, []);
   const columns = [
     {
       title: 'Số hợp đồng',
