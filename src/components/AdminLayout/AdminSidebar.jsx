@@ -254,7 +254,7 @@ const AdminSidebar = ({ collapsed, onCollapse, style }) => {
             onClick={onCollapse}
             style={{
               position: 'absolute',
-              bottom: '19%',
+              bottom: '0',
               width: '100%',
               textAlign: 'center',
               marginTop: 'auto',

@@ -145,7 +145,7 @@ const Sidebar = ({ collapsed, onCollapse, style }) => {
             onClick={onCollapse}
             style={{
               position: 'absolute',
-              bottom: '19%',
+              bottom: '2px',
               width: '100%',
               textAlign: 'center',
               marginTop: 'auto',

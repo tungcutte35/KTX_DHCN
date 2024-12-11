@@ -52,7 +52,8 @@ const StudentRoomManagement = () => {
     useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [equipmentDatas, setEquipmentDatas] = useState([]);
-  const { buildingData, loading } = useContext(BuildingContext);
+  const { buildingData, loading, desc, refreshBuildingData } =
+    useContext(BuildingContext);
   const [equipmentData, setEquipmentData] = useState([]);
   const [gender, setGender] = useState('male');
   const [rooms, setRooms] = useState([]);
@@ -78,15 +79,15 @@ const StudentRoomManagement = () => {
 
         const response = await updateStudentBtAdmin(
           selectedStudent.studentId,
-          { roomName: roomNumber },
+          { roomName: roomNumber, description: desc },
           token
         );
 
         if (response) {
           message.success('Cập nhật phòng thành công!');
           setRoomSelectionModalVisible(false);
-
           setStudentModalVisible(false);
+          refreshBuildingData();
         } else {
           message.error('Cập nhật phòng thất bại!');
         }
@@ -167,7 +168,6 @@ const StudentRoomManagement = () => {
 
   const [forms, setForms] = useState(buildingData);
   const [filteredData, setFilteredData] = useState(buildingData);
-  // Filter logic remains the same
   const filteredBuildingData = buildingData
     .filter((building) => {
       if (genderFilter === 'male' && building.key === 'G') return false;
@@ -220,14 +220,12 @@ const StudentRoomManagement = () => {
       return;
     }
     try {
-      // Fetch students from the API
       const students = await getStudentsByRoomByAdmin(room.roomNumber);
 
-      // Update state with room and student details
       setSelectedRoom(room.roomNumber);
-      setSelectedRoomStudents(students); // Update table data
+      setSelectedRoomStudents(students);
       setSelectedFloor(floor.floor);
-      setStudentModalVisible(true); // Show modal
+      setStudentModalVisible(true);
     } catch (error) {
       console.error('Failed to fetch students:', error);
       message.error('Không tìm thấy học sinh nào trong phòng này.');
@@ -261,8 +259,8 @@ const StudentRoomManagement = () => {
   };
 
   const handleOpenRoomSelection = (student) => {
-    setSelectedStudent(student); // Set the selected student for room change
-    setRoomSelectionModalVisible(true); // Show the room selection modal
+    setSelectedStudent(student);
+    setRoomSelectionModalVisible(true);
   };
   const columns = [
     {
@@ -273,7 +271,7 @@ const StudentRoomManagement = () => {
     },
     {
       title: 'Tình trạng',
-      dataIndex: 'available', // Available value like "7/10"
+      dataIndex: 'available',
       key: 'available',
       align: 'center',
       render: (available) => {
@@ -396,92 +394,6 @@ const StudentRoomManagement = () => {
 
     setFilteredData(filtered);
   };
-  // const exportToExcel = async () => {
-  //   const workbook = new ExcelJS.Workbook();
-  //   const worksheet = workbook.addWorksheet('Thống kê phòng ở');
-
-  //   // Define columns for the Excel sheet
-  //   worksheet.columns = [
-  //     { header: 'Phòng', key: 'room', width: 15 },
-  //     { header: 'Số lượng SV hiện tại', key: 'studentCount', width: 20 },
-  //     { header: 'Danh sách tên SV', key: 'studentNames', width: 30 },
-  //     { header: 'Danh sách thiết bị', key: 'equipment', width: 30 },
-  //     { header: 'Tình trạng', key: 'status', width: 20 },
-  //   ];
-
-  //   let rowCount = 1;
-
-  //   // Safely loop through the filtered data
-  //   filteredBuildingData?.forEach((building) => {
-  //     building.floors?.forEach((floor) => {
-  //       floor.rooms?.forEach((room) => {
-  //         // Find the students and equipment for this room
-  //         const selectedRoom =
-  //           selectedRoomStudents.find(
-  //             (student) => student.roomNumber === room.roomNumber
-  //           ) || {};
-  //         const equipmentInRoom = equipmentData.filter(
-  //           (equipment) => equipment.roomNumber === room.roomNumber
-  //         );
-
-  //         // Ensure students and equipment exist
-  //         const studentNames = Array.isArray(selectedRoom)
-  //           ? selectedRoom.map((student) => student.name).join(', ')
-  //           : 'N/A';
-
-  //         const equipmentList =
-  //           equipmentInRoom && equipmentInRoom.length > 0
-  //             ? equipmentInRoom.map((e) => e.name).join(', ')
-  //             : 'N/A';
-
-  //         const row = {
-  //           id: rowCount++,
-  //           room: room.roomNumber || 'N/A',
-  //           status:
-  //             room.available && room.available.split('/')[0] === '0'
-  //               ? 'Đã đầy'
-  //               : 'Còn trống',
-
-  //           studentCount: room.available,
-  //           studentNames: studentNames,
-  //           equipment: equipmentList,
-  //         };
-
-  //         worksheet.addRow(row);
-  //       });
-  //     });
-  //   });
-
-  //   // Make the first row bold and centered
-  //   worksheet.getRow(1).font = { bold: true };
-  //   worksheet.getRow(1).alignment = { horizontal: 'center' };
-
-  //   // Add borders to all cells
-  //   worksheet.eachRow((row) => {
-  //     row.eachCell((cell) => {
-  //       cell.border = {
-  //         top: { style: 'thin' },
-  //         left: { style: 'thin' },
-  //         bottom: { style: 'thin' },
-  //         right: { style: 'thin' },
-  //       };
-  //     });
-  //   });
-
-  //   try {
-  //     // Generate the Excel file and trigger download
-  //     const buffer = await workbook.xlsx.writeBuffer();
-  //     const blob = new Blob([buffer], { type: 'application/octet-stream' });
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = 'thong_ke_phong_o.xlsx';
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error('Error exporting to Excel:', error);
-  //   }
-  // };
 
   return (
     <div>
@@ -643,7 +555,7 @@ const StudentRoomManagement = () => {
                 key="confirm"
                 type="primary"
                 onClick={() => handleConfirmChangeRoom(selectedRoom)}
-                disabled={!selectedRoom} // Disable if no room is selected
+                disabled={!selectedRoom}
               >
                 Chọn
               </Button>,

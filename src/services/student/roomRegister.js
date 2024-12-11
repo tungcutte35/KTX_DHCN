@@ -56,3 +56,22 @@ export const getMemberRoom = async (token, navigate) => {
     throw error;
   }
 };
+
+export const swapLeaderStudent = async (token, studentId) => {
+  if (!token) {
+    console.error('No token found');
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await api.put(`/students/swapLeader/${studentId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error during getMemberRoom API call:', error);
+    throw error;
+  }
+};

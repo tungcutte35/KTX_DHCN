@@ -15,6 +15,7 @@ import Cookies from 'js-cookie'; // Import Cookies
 import { getMemberRoom } from '../../../services/auth/room';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../../context/UseContext';
+import { swapLeaderStudent } from '../../../services/student/roomRegister';
 
 const { Option } = Select;
 
@@ -61,10 +62,34 @@ const StudentList = () => {
     setIsModalVisible(false);
   };
 
-  const handleOk = () => {
-    if (selectedLeader) {
+  const handleOk = async () => {
+    if (!selectedLeader) {
+      console.error('No leader selected');
+      return;
+    }
+
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        message.info('Vui lòng đăng nhập để tiếp tục!');
+        navigate('/login');
+        return;
+      }
+
+      const result = await swapLeaderStudent(token, selectedLeader);
+      console.log('Leader swapped successfully:', result);
+
+      const updatedStudents = students.map((student) =>
+        student.studentId === selectedLeader
+          ? { ...student, isLeader: true }
+          : { ...student, isLeader: false }
+      );
+
+      setStudents(updatedStudents);
       setRoomLeader(selectedLeader);
       setIsModalVisible(false);
+    } catch (error) {
+      console.error('Error swapping leader:', error);
     }
   };
 
@@ -115,7 +140,7 @@ const StudentList = () => {
               Đăng ký phòng
             </Button>
           ) : null}
-          {user?.roomName || user?.isLeader ? (
+          {user?.isLeader === true ? (
             <Button
               type="primary"
               onClick={showModal}
@@ -138,7 +163,7 @@ const StudentList = () => {
               dataSource={students}
               columns={columns}
               pagination={false}
-              rowKey="mssv"
+              rowKey="studentId"
               bordered
               size="middle"
               scroll={{ x: true }}
@@ -162,11 +187,13 @@ const StudentList = () => {
           onChange={handleLeaderChange}
           value={selectedLeader}
         >
-          {students.map((student) => (
-            <Option key={student.studentId} value={student.studentId}>
-              {student.name}
-            </Option>
-          ))}
+          {students
+            .filter((student) => student.studentId !== user?.studentId) // Exclude current user
+            .map((student) => (
+              <Option key={student.studentId} value={student.studentId}>
+                {student.name}
+              </Option>
+            ))}
         </Select>
       </Modal>
     </div>
