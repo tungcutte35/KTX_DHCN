@@ -203,9 +203,20 @@ const PaymentUtilitiesManagement = () => {
       };
 
       const response = await createUtilityPaymentsForRoomByAdmin(token, data);
-
+      const dataPaymentTable = response.payment;
       if (response.message === 'Utility payment created successfully.') {
         message.success('Thêm tiền điện/nước thành công!');
+        console.log('response: ', response.payment);
+        const newUtilityFee = {
+          ...dataPaymentTable,
+          key: dataPaymentTable.studentId,
+          studentId: dataPaymentTable.studentId,
+          updateAt: dataPaymentTable.updateAt,
+          dueDate: dataPaymentTable.dueDate,
+          paymentStatus: dataPaymentTable.paymentStatus,
+        };
+
+        setUtilityFees((prevFees) => [newUtilityFee, ...prevFees]);
         setIsAddUtilityFeeModalVisible(false);
         form.resetFields();
       } else {
@@ -301,39 +312,39 @@ const PaymentUtilitiesManagement = () => {
     a.click();
     URL.revokeObjectURL(url);
   };
-  const handleCalculateElectricityWater = async () => {
-    try {
-      console.log('Đang tính toán điện/nước...');
+  // const handleCalculateElectricityWater = async () => {
+  //   try {
+  //     console.log('Đang tính toán điện/nước...');
 
-      message.success('Tính toán thành công!');
-    } catch (error) {
-      message.error('Có lỗi xảy ra khi tính toán!');
-    }
-  };
+  //     message.success('Tính toán thành công!');
+  //   } catch (error) {
+  //     message.error('Có lỗi xảy ra khi tính toán!');
+  //   }
+  // };
 
-  const showProcessingModal = () => {
-    // Hiển thị modal thông báo
-    Modal.confirm({
-      title: 'Thông báo',
-      content: (
-        <div>
-          <p style={{ color: 'red' }}>
-            Thời gian chờ có thể lâu do hệ thống đang tính toán hóa đơn
-            điện/nước.
-          </p>
-          <p>Bạn có muốn tiếp tục không?</p>
-        </div>
-      ),
-      onOk() {
-        handleCalculateElectricityWater();
-      },
-      onCancel() {
-        console.log('Người dùng đã hủy');
-      },
-      okText: 'Lưu',
-      cancelText: 'Hủy',
-    });
-  };
+  // const showProcessingModal = () => {
+  //   // Hiển thị modal thông báo
+  //   Modal.confirm({
+  //     title: 'Thông báo',
+  //     content: (
+  //       <div>
+  //         <p style={{ color: 'red' }}>
+  //           Thời gian chờ có thể lâu do hệ thống đang tính toán hóa đơn
+  //           điện/nước.
+  //         </p>
+  //         <p>Bạn có muốn tiếp tục không?</p>
+  //       </div>
+  //     ),
+  //     onOk() {
+  //       handleCalculateElectricityWater();
+  //     },
+  //     onCancel() {
+  //       console.log('Người dùng đã hủy');
+  //     },
+  //     okText: 'Lưu',
+  //     cancelText: 'Hủy',
+  //   });
+  // };
   return (
     <div style={{ padding: '24px' }}>
       <Helmet>
@@ -373,14 +384,14 @@ const PaymentUtilitiesManagement = () => {
             marginTop: '-30px',
           }}
         >
-          <Button
+          {/* <Button
             type="primary"
             icon={<AlertFilled />}
             style={{ marginTop: '6px' }}
             onClick={showProcessingModal}
           >
             Tự động tính điện/nước
-          </Button>
+          </Button> */}
           <Button
             type="primary"
             icon={<PlusOutlined />}
